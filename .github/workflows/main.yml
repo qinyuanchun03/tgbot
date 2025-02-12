@@ -3,8 +3,8 @@ name: Telegram Bot Deployment
 
 on:
   push:
-    branches: [ main ]  # 当推送到 main 分支时触发
-  workflow_dispatch:  # 允许手动触发工作流
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -22,19 +22,29 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'  # 或者你使用的 Python 版本
+          python-version: '3.9'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt  # 如果你有 requirements.txt 文件
+          pip install -r requirements.txt
 
       - name: Stop previous bot (if running)
         run: |
-          pkill -f bot.py || true  # 尝试停止之前的机器人进程，忽略错误
+          pkill -9 -f "python bot.py" || true  # 强制杀死进程
+          sleep 5  # 等待 5 秒
+
+      - name: Check if bot is stopped
+        run: |
+          if pgrep -f "python bot.py"; then
+            echo "Bot is still running!"
+            exit 1  # 如果机器人仍在运行，则退出工作流程
+          else
+            echo "Bot is stopped."
+          fi
 
       - name: Run Telegram Bot
         env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}  # 从 GitHub Secrets 获取 Token
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         run: |
-          nohup python bot.py &  # 在后台运行机器人
+          nohup python bot.py &
