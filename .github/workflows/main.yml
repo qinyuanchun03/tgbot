@@ -1,5 +1,5 @@
 # .github/workflows/main.yml
-name: Telegram Bot Deployment
+name: Telegram Bot Server Deployment
 
 on:
   push:
@@ -14,11 +14,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Clear cache
-        run: |
-          rm -rf __pycache__
-          find . -name "*.pyc" -delete
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -29,22 +24,20 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Stop previous bot (if running)
+      - name: Stop previous server (if running)
         run: |
-          pkill -9 -f "python bot.py" || true  # 强制杀死进程
-          sleep 5  # 等待 5 秒
+          pkill -9 -f "python serve.py" || true
+          sleep 5
 
-      - name: Check if bot is stopped
+      - name: Check if server is stopped
         run: |
-          if pgrep -f "python bot.py"; then
-            echo "Bot is still running!"
-            exit 1  # 如果机器人仍在运行，则退出工作流程
+          if pgrep -f "python serve.py"; then
+            echo "Server is still running!"
+            exit 1
           else
-            echo "Bot is stopped."
+            echo "Server is stopped."
           fi
 
-      - name: Run Telegram Bot
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      - name: Run Telegram Bot Server
         run: |
-          nohup python bot.py &
+          nohup python serve.py &
