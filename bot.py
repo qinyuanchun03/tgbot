@@ -52,7 +52,7 @@ async def hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 if __name__ == '__main__':
     application = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
 
-    start_handler = CommandHandler('start', start.start)  # 使用 start.start
+    start_handler = CommandHandler('start', start)  # 直接使用 start 函数
     help_handler = CommandHandler('help', help_command)
     hello_handler = CommandHandler('hello', hello)
 
