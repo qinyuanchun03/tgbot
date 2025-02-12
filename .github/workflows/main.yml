@@ -4,6 +4,12 @@ name: Telegram Bot Deployment
 on:
   push:
     branches: [ main ]  # 当推送到 main 分支时触发
+    paths:
+      - '**'           # 监控所有文件
+  pull_request:
+    branches: [ main ]  # 当有 pull request 到 main 分支时触发
+    paths:
+      - '**'           # 监控所有文件
   workflow_dispatch:  # 允许手动触发工作流
 
 jobs:
@@ -24,7 +30,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt  # 如果你有 requirements.txt 文件
 
+      - name: Stop previous bot (if running)
+        run: |
+          pkill -f bot.py || true  # 尝试停止之前的机器人进程，忽略错误
+
       - name: Run Telegram Bot
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}  # 从 GitHub Secrets 获取 Token
-        run: python bot.py
+        run: |
+          nohup python bot.py &  # 在后台运行机器人
