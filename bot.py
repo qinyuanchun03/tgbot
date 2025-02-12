@@ -1,8 +1,8 @@
 # bot.py
 import logging
-from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
-from config import TELEGRAM_BOT_TOKEN
+from config import TELEGRAM_BOT_TOKEN  # 导入 Token
 from utils.menu import generate_main_menu
 from commands import start, help  # 导入命令处理模块
 
@@ -46,7 +46,7 @@ async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 def main():
-    application = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
+    application = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()  # 使用导入的 Token
 
     # 添加命令处理程序
     application.add_handler(CommandHandler("start", start.start))
