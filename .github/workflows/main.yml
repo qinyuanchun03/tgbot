@@ -10,11 +10,14 @@ on:
     branches: [ main ]
     paths:
       - '**'
-  workflow_dispatch:  # 允许手动触发工作流
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read  # 允许读取仓库内容
+      actions: write  # 允许运行 actions (如果需要)
 
     steps:
       - name: Checkout code
